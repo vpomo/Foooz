@@ -3,9 +3,9 @@ var FooozCrowdsale = artifacts.require("./FooozCrowdsale.sol");
 
 contract('FooozCrowdsale', (accounts) => {
     var contract;
-    var owner = "0x6d2Faf6A5706bCC104E9C001f0Af585c11F72437";
+    //var owner = "0x6d2Faf6A5706bCC104E9C001f0Af585c11F72437";
     var addressFundBonus = "0x1f318fE745bEE511a72A8AB2b704a5F285587335";
-    //var owner = accounts[0];
+    var owner = accounts[0];
     var rate = 3362*1.1;
     var buyWei = 5 * 10**17;
     var rateNew = 3362*1.1;
@@ -15,7 +15,7 @@ contract('FooozCrowdsale', (accounts) => {
 
     var period = 0;
 
-    var totalSupply = 466133330* (10 ** 18);
+    var totalSupply = Number(466133330* (10 ** 18));
 
     it('should deployed contract', async ()  => {
         assert.equal(undefined, contract);

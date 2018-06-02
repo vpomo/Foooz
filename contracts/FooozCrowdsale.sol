@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 
 library SafeMath {
@@ -104,7 +104,7 @@ contract BasicToken is ERC20Basic {
         // SafeMath.sub will throw if there is not enough balance.
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
-        Transfer(msg.sender, _to, _value);
+        emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
@@ -139,7 +139,7 @@ contract StandardToken is ERC20, BasicToken {
         balances[_from] = balances[_from].sub(_value);
         balances[_to] = balances[_to].add(_value);
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
-        Transfer(_from, _to, _value);
+        emit Transfer(_from, _to, _value);
         return true;
     }
 
@@ -155,7 +155,7 @@ contract StandardToken is ERC20, BasicToken {
      */
     function approve(address _spender, uint256 _value) public returns (bool) {
         allowed[msg.sender][_spender] = _value;
-        Approval(msg.sender, _spender, _value);
+        emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
@@ -177,7 +177,7 @@ contract StandardToken is ERC20, BasicToken {
      */
     function increaseApproval(address _spender, uint _addedValue) public returns (bool success) {
         allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);
-        Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
+        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
         return true;
     }
 
@@ -189,7 +189,7 @@ contract StandardToken is ERC20, BasicToken {
         else {
             allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);
         }
-        Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
+        emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
         return true;
     }
 
@@ -211,7 +211,7 @@ contract Ownable {
      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
      * account.
      */
-    function Ownable() public {
+    constructor() public {
     }
 
 
@@ -230,7 +230,7 @@ contract Ownable {
      */
     function changeOwnerTwo(address _newOwner) onlyOwner public {
         require(_newOwner != address(0));
-        OwnerChanged(owner, _newOwner);
+        emit OwnerChanged(owner, _newOwner);
         ownerTwo = _newOwner;
     }
 
@@ -268,8 +268,8 @@ contract MintableToken is StandardToken, Ownable {
     function mint(address _to, uint256 _amount, address _owner) canMint internal returns (bool) {
         balances[_to] = balances[_to].add(_amount);
         balances[_owner] = balances[_owner].sub(_amount);
-        Mint(_to, _amount);
-        Transfer(_owner, _to, _amount);
+        emit Mint(_to, _amount);
+        emit Transfer(_owner, _to, _amount);
         return true;
     }
 
@@ -279,7 +279,7 @@ contract MintableToken is StandardToken, Ownable {
      */
     function finishMinting() onlyOwner canMint internal returns (bool) {
         mintingFinished = true;
-        MintFinished();
+        emit MintFinished();
         return true;
     }
 
@@ -289,7 +289,7 @@ contract MintableToken is StandardToken, Ownable {
      */
     function claimTokens(address _token) public onlyOwner {
         if (_token == 0x0) {
-            owner.transfer(this.balance);
+            owner.transfer(address(this).balance);
             return;
         }
 
@@ -297,7 +297,7 @@ contract MintableToken is StandardToken, Ownable {
         uint256 balance = token.balanceOf(this);
         token.transfer(owner, balance);
 
-        Transfer(_token, owner, balance);
+        emit Transfer(_token, owner, balance);
     }
 }
 
@@ -321,11 +321,7 @@ contract Crowdsale is Ownable {
 
     uint256 public hardWeiCap = 119000 * (10 ** 18);
 
-    function Crowdsale(
-    address _wallet
-    )
-    public
-    {
+    constructor (address _wallet) public {
         require(_wallet != address(0));
         wallet = _wallet;
     }
@@ -356,8 +352,9 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
 
     uint256 public weiMinSalePreIco = 1190 * 10 ** 15;
     uint256 public weiMinSaleIco = 29 * 10 ** 15;
-    uint256 priceToken = 3362; // $0.25 = 1 token => $1,000 = 1.19 ETH =>
-                         //4,000 token = 1.19 ETH => 1 ETH = 4,000/1.19 = 3362 token
+    uint256 priceToken = 3362;
+    // $0.25 = 1 token => $1,000 = 1.19 ETH =>
+    //4,000 token = 1.19 ETH => 1 ETH = 4,000/1.19 = 3362 token
 
     uint256 public countInvestor;
     uint256 public currentAfterIcoPeriod;
@@ -367,14 +364,14 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
     event HardCapReached();
     event Finalized();
 
-    function FooozCrowdsale (address _owner, address _ownerTwo) public
+    constructor (address _owner, address _ownerTwo) public
     Crowdsale(_owner)
     {
         require(_owner != address(0));
         require(_ownerTwo != address(0));
         owner = _owner;
         ownerTwo = _ownerTwo;
-        //owner = msg.sender; //for test's
+        owner = msg.sender; //for test's
         transfersEnabled = true;
         mintingFinished = false;
         state = State.Active;
@@ -407,7 +404,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
         tokenAllocated = tokenAllocated.add(tokens);
         mint(_investor, tokens, owner);
 
-        TokenPurchase(_investor, weiAmount, tokens);
+        emit TokenPurchase(_investor, weiAmount, tokens);
         if (deposited[_investor] == 0) {
             countInvestor = countInvestor.add(1);
         }
@@ -418,7 +415,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
 
     function getTotalAmountOfTokens(uint256 _weiAmount) internal view returns (uint256) {
         uint256 currentDate = now;
-        //currentDate = 1526342400; //for test's (Tue, 15 May 2018 00:00:00 GMT)
+        currentDate = 1526342400; //for test's (Tue, 15 May 2018 00:00:00 GMT)
         uint256 currentPeriod = getPeriod(currentDate);
         uint256 amountOfTokens = 0;
         if(currentPeriod < 6){
@@ -471,16 +468,16 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
 
     function getAfterIcoPeriod(uint256 _currentDate) public pure returns (uint) {
         uint256 endIco = 1527811199; // May,   31, 2018 23:59:59
-        if( endIco < _currentDate && _currentDate <= endIco + 2 years){
+        if( endIco < _currentDate && _currentDate <= endIco + 2*365 days){
             return 100;
         }
-        if( endIco + 2 years < _currentDate && _currentDate <= endIco + 4 years){
+        if( endIco + 2*365 days < _currentDate && _currentDate <= endIco + 4*365 days){
             return 200;
         }
-        if( endIco + 4 years < _currentDate && _currentDate <= endIco + 6 years){
+        if( endIco + 4*365 days < _currentDate && _currentDate <= endIco + 6*365 days){
             return 300;
         }
-        if( endIco + 6 years < _currentDate && _currentDate <= endIco + 8 years){
+        if( endIco + 6*365 days < _currentDate && _currentDate <= endIco + 8*365 days){
             return 400;
         }
         return 0;
@@ -490,7 +487,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
         uint256 totalCost = tokenAllocated.div(priceToken);
         uint256 fivePercent = 0;
         uint256 currentDate = now;
-        //currentDate = 1564704000; //for test Aug, 02, 2019
+        currentDate = 1564704000; //for test Aug, 02, 2019
         bool changePeriod = false;
         uint256 nonSoldToken = totalSupply.sub(tokenAllocated);
         uint256 mintTokens = 0;
@@ -539,11 +536,11 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
     function validPurchaseTokens(uint256 _weiAmount) public inState(State.Active) returns (uint256) {
         uint256 addTokens = getTotalAmountOfTokens(_weiAmount);
         if (tokenAllocated.add(addTokens) > fundForSale) {
-            TokenLimitReached(tokenAllocated, addTokens);
+            emit TokenLimitReached(tokenAllocated, addTokens);
             return 0;
         }
         if (weiRaised.add(_weiAmount) > hardWeiCap) {
-            HardCapReached();
+            emit HardCapReached();
             return 0;
         }
         return addTokens;
@@ -552,9 +549,9 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
     function finalize() public onlyOwner inState(State.Active) returns (bool result) {
         result = false;
         state = State.Closed;
-        wallet.transfer(this.balance);
+        wallet.transfer(address(this).balance);
         finishMinting();
-        Finalized();
+        emit Finalized();
         result = true;
     }
 
