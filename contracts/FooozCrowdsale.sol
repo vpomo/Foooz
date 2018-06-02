@@ -371,7 +371,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
         require(_ownerTwo != address(0));
         owner = _owner;
         ownerTwo = _ownerTwo;
-        owner = msg.sender; //for test's
+        //owner = msg.sender; //for test's
         transfersEnabled = true;
         mintingFinished = false;
         state = State.Active;
@@ -415,7 +415,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
 
     function getTotalAmountOfTokens(uint256 _weiAmount) internal view returns (uint256) {
         uint256 currentDate = now;
-        currentDate = 1531526400; //for test's (Tue, 14 Jule 2018 00:00:00 GMT)
+        //currentDate = 1531526400; //for test's (Tue, 14 Jule 2018 00:00:00 GMT)
         uint256 currentPeriod = getPeriod(currentDate);
         uint256 amountOfTokens = 0;
         if(currentPeriod < 5){
@@ -482,7 +482,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
         uint256 totalCost = tokenAllocated.div(priceToken);
         uint256 fivePercent = 0;
         uint256 currentDate = now;
-        currentDate = 1564704000; //for test Aug, 02, 2019
+        //currentDate = 1564704000; //for test Aug, 02, 2019
         bool changePeriod = false;
         uint256 nonSoldToken = totalSupply.sub(tokenAllocated);
         uint256 mintTokens = 0;
