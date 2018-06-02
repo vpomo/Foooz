@@ -346,7 +346,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
     address public addressFundAdministration = 0xFe3905B9Bd7C0c4164873180dfE0ee85FbFe9F19;
 
 
-    uint256[] public discount  = [50, 25, 20, 15, 10, 5];
+    uint256[] public discount  = [50, 25, 20, 15, 10];
 
 
 
@@ -415,59 +415,54 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
 
     function getTotalAmountOfTokens(uint256 _weiAmount) internal view returns (uint256) {
         uint256 currentDate = now;
-        currentDate = 1526342400; //for test's (Tue, 15 May 2018 00:00:00 GMT)
+        currentDate = 1531526400; //for test's (Tue, 14 Jule 2018 00:00:00 GMT)
         uint256 currentPeriod = getPeriod(currentDate);
         uint256 amountOfTokens = 0;
-        if(currentPeriod < 6){
+        if(currentPeriod < 5){
             amountOfTokens = _weiAmount.mul(priceToken).mul(discount[currentPeriod] + 100).div(100);
         }
         if(currentPeriod == 0 && _weiAmount < weiMinSalePreIco){
             amountOfTokens = 0;
         }
-        if(0 < currentPeriod && currentPeriod < 6 && _weiAmount < weiMinSaleIco){
+        if(0 < currentPeriod && currentPeriod < 5 && _weiAmount < weiMinSaleIco){
             amountOfTokens = 0;
         }
         return amountOfTokens;
     }
 
     /**
-    * Pre-ICO sale starts on 31 of March, ends on 06 April 2018
-    * 1st. Stage starts 07 of April , ends on 16 of April , 2018
-    * 2nd. Stage starts 17 of April , ends on 26 of April , 2018
-    * 3rd. Stage starts 27 of April , ends on 06 of May , 2018
-    * 4th. Stage starts 07 of May,    ends on 16  of May , 2018
-    * 4th. Stage starts 17 of May,    ends on 31 of May , 2018
+    * Pre-ICO sale starts on 01 of Jun, ends on 05 Jun 2018
+    * 1st. Stage starts 06 of Jun, ends on 15 of Jun , 2018
+    * 2nd. Stage starts 16 of Jun, ends on 25 of Jun , 2018
+    * 3rd. Stage starts 26 of Jun, ends on 05 of Jul , 2018
+    * 4th. Stage starts 06 of Jul, ends on 15  of Jul , 2018
     */
     function getPeriod(uint256 _currentDate) public pure returns (uint) {
-        //1522454400 - March, 31, 2018 00:00:00 && 1523059199 - April, 06, 2018 23:59:59
-        if( 1522454400 <= _currentDate && _currentDate <= 1523059199){
+        //1527811200 - June, 01, 2018 00:00:00 && 1528243199 - June, 05, 2018 23:59:59
+        if( 1527811200 <= _currentDate && _currentDate <= 1528243199){
             return 0;
         }
-        //1523059200 - April, 07, 2018 00:00:00 && 1523923199 - April, 16, 2018 23:59:59
-        if( 1523059200 <= _currentDate && _currentDate <= 1523923199){
+        //1528243200 - June, 06, 2018 00:00:00 && 1529107199 - June, 15, 2018 23:59:59
+        if( 1528243200 <= _currentDate && _currentDate <= 1529107199){
             return 1;
         }
-        //1523923200 - April, 17, 2018 00:00:00 && 1524787199 - April, 26, 2018 23:59:59
-        if( 1523923200 <= _currentDate && _currentDate <= 1524787199){
+        //1529107200 - June, 16, 2018 00:00:00 && 1529971199 - June, 25, 2018 23:59:59
+        if( 1529107200 <= _currentDate && _currentDate <= 1529971199){
             return 2;
         }
-        //1524787200 - April, 27, 2018 00:00:00 && 1525651199 - May,   06, 2018 23:59:59
-        if( 1524787200 <= _currentDate && _currentDate <= 1525651199){
+        //1529971200 - June, 26, 2018 00:00:00 && 1530835199 - Jule,   05, 2018 23:59:59
+        if( 1529971200 <= _currentDate && _currentDate <= 1530835199){
             return 3;
         }
-        //1525651200 - May,   07, 2018 00:00:00 && 1526515199 - May,   16, 2018 23:59:59
-        if( 1525651200 <= _currentDate && _currentDate <= 1526515199){
+        //1530835200 - Jule,   06, 2018 00:00:00 && 1531699199 - Jule,   15, 2018 23:59:59
+        if( 1530835200 <= _currentDate && _currentDate <= 1531699199){
             return 4;
-        }
-        //1526515200 - May,   17, 2018 00:00:00 && 1527811199 - May,   31, 2018 23:59:59
-        if( 1526515200 <= _currentDate && _currentDate <= 1527811199){
-            return 5;
         }
         return 10;
     }
 
     function getAfterIcoPeriod(uint256 _currentDate) public pure returns (uint) {
-        uint256 endIco = 1527811199; // May,   31, 2018 23:59:59
+        uint256 endIco = 1531699200; // Jule,   16, 2018 00:00:00
         if( endIco < _currentDate && _currentDate <= endIco + 2*365 days){
             return 100;
         }
