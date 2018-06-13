@@ -415,7 +415,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
 
     function getTotalAmountOfTokens(uint256 _weiAmount) internal view returns (uint256) {
         uint256 currentDate = now;
-        //currentDate = 1531526400; //for test's (Tue, 14 Jule 2018 00:00:00 GMT)
+        //currentDate = 1534204800; //for test's (Tue, 14 Aug 2018 00:00:00 GMT)
         uint256 currentPeriod = getPeriod(currentDate);
         uint256 amountOfTokens = 0;
         if(currentPeriod < 5){
@@ -431,38 +431,38 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
     }
 
     /**
-    * Pre-ICO sale starts on 01 of Jun, ends on 05 Jun 2018
-    * 1st. Stage starts 06 of Jun, ends on 15 of Jun , 2018
-    * 2nd. Stage starts 16 of Jun, ends on 25 of Jun , 2018
-    * 3rd. Stage starts 26 of Jun, ends on 05 of Jul , 2018
-    * 4th. Stage starts 06 of Jul, ends on 15  of Jul , 2018
+    * Pre-ICO sale starts on 01 of Jul, ends on 05 Jul 2018
+    * 1st. Stage starts 06 of Jul, ends on 15 of Jul , 2018
+    * 2nd. Stage starts 16 of Jul, ends on 25 of Jul , 2018
+    * 3rd. Stage starts 26 of Jul, ends on 05 of Aug , 2018
+    * 4th. Stage starts 06 of Aug, ends on 15  of Aug , 2018
     */
     function getPeriod(uint256 _currentDate) public pure returns (uint) {
-        //1527811200 - June, 01, 2018 00:00:00 && 1528243199 - June, 05, 2018 23:59:59
-        if( 1527811200 <= _currentDate && _currentDate <= 1528243199){
+        //1530403200 - July, 01, 2018 00:00:00 && 1530835199 - July, 05, 2018 23:59:59
+        if( 1530403200 <= _currentDate && _currentDate <= 1530835199){
             return 0;
         }
-        //1528243200 - June, 06, 2018 00:00:00 && 1529107199 - June, 15, 2018 23:59:59
-        if( 1528243200 <= _currentDate && _currentDate <= 1529107199){
+        //1530835200 - July, 06, 2018 00:00:00 && 1531699199 - July, 15, 2018 23:59:59
+        if( 1530835200 <= _currentDate && _currentDate <= 1531699199){
             return 1;
         }
-        //1529107200 - June, 16, 2018 00:00:00 && 1529971199 - June, 25, 2018 23:59:59
-        if( 1529107200 <= _currentDate && _currentDate <= 1529971199){
+        //1531699200 - July, 16, 2018 00:00:00 && 1532563199 - July, 25, 2018 23:59:59
+        if( 1531699200 <= _currentDate && _currentDate <= 1532563199){
             return 2;
         }
-        //1529971200 - June, 26, 2018 00:00:00 && 1530835199 - Jule,   05, 2018 23:59:59
-        if( 1529971200 <= _currentDate && _currentDate <= 1530835199){
+        //1532563200 - July, 26, 2018 00:00:00 && 1533513599 - August,   05, 2018 23:59:59
+        if( 1532563200 <= _currentDate && _currentDate <= 1533513599){
             return 3;
         }
-        //1530835200 - Jule,   06, 2018 00:00:00 && 1531699199 - Jule,   15, 2018 23:59:59
-        if( 1530835200 <= _currentDate && _currentDate <= 1531699199){
+        //1533513600 - August,   06, 2018 00:00:00 && 1534377599 - August,   15, 2018 23:59:59
+        if( 1533513600 <= _currentDate && _currentDate <= 1534377599){
             return 4;
         }
         return 10;
     }
 
     function getAfterIcoPeriod(uint256 _currentDate) public pure returns (uint) {
-        uint256 endIco = 1531699200; // Jule,   16, 2018 00:00:00
+        uint256 endIco = 1534377600; // August,   16, 2018 00:00:00
         if( endIco < _currentDate && _currentDate <= endIco + 2*365 days){
             return 100;
         }
@@ -482,7 +482,7 @@ contract FooozCrowdsale is Ownable, Crowdsale, MintableToken {
         uint256 totalCost = tokenAllocated.div(priceToken);
         uint256 fivePercent = 0;
         uint256 currentDate = now;
-        //currentDate = 1564704000; //for test Aug, 02, 2019
+        //currentDate = 1571101199; //for test Oct, 15, 2019
         bool changePeriod = false;
         uint256 nonSoldToken = totalSupply.sub(tokenAllocated);
         uint256 mintTokens = 0;
